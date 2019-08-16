@@ -1,20 +1,26 @@
 import {
     DateTimeFormat as commonDateTimeFormat,
     NumberFormat as commonNumberFormat,
-    FULL
+    FULL,
 } from "./nativescript-intl-common";
 import { NumberFormatOptions } from "./nativescript-intl";
 
 export class DateTimeFormat extends commonDateTimeFormat {
-    public getNativePattern(patternDefinition: {date?: string, time?: string}, locale?: string): string {
+    public getNativePattern(
+        patternDefinition: { date?: string; time?: string },
+        locale?: string,
+    ): string {
         let dateFormatter = NSDateFormatter.new();
         if (locale) {
-            dateFormatter.locale = NSLocale.alloc().initWithLocaleIdentifier(locale);
+            dateFormatter.locale = NSLocale.alloc().initWithLocaleIdentifier(
+                locale,
+            );
         }
         if (patternDefinition.date) {
-            dateFormatter.dateStyle = patternDefinition.date === FULL ?
-                NSDateFormatterStyle.FullStyle :
-                NSDateFormatterStyle.ShortStyle;
+            dateFormatter.dateStyle =
+                patternDefinition.date === FULL
+                    ? NSDateFormatterStyle.FullStyle
+                    : NSDateFormatterStyle.ShortStyle;
         }
         if (patternDefinition.time) {
             dateFormatter.timeStyle = NSDateFormatterStyle.LongStyle;
@@ -25,7 +31,9 @@ export class DateTimeFormat extends commonDateTimeFormat {
     public formatNative(pattern: string, locale?: string, date?: Date): string {
         let dateFormatter = NSDateFormatter.new();
         if (locale) {
-            dateFormatter.locale = NSLocale.alloc().initWithLocaleIdentifier(locale);
+            dateFormatter.locale = NSLocale.alloc().initWithLocaleIdentifier(
+                locale,
+            );
         }
         dateFormatter.dateFormat = pattern;
         // return dateFormatter.stringFromDate(date ?
@@ -43,27 +51,38 @@ export class DateTimeFormat extends commonDateTimeFormat {
 // minimumFractionDigits?: number;
 // maximumFractionDigits?: number;
 export class NumberFormat extends commonNumberFormat {
-    public formatNative(value: number, locale?: string, options?: NumberFormatOptions, pattern?: string) {
+    public formatNative(
+        value: number,
+        locale?: string,
+        options?: NumberFormatOptions,
+        pattern?: string,
+    ) {
         let numberFormat = NSNumberFormatter.new();
         if (locale) {
-            numberFormat.locale = NSLocale.alloc().initWithLocaleIdentifier(locale);
+            numberFormat.locale = NSLocale.alloc().initWithLocaleIdentifier(
+                locale,
+            );
         }
         if (options) {
             switch (options.style.toLowerCase()) {
                 case "decimal":
-                    numberFormat.numberStyle = NSNumberFormatterStyle.DecimalStyle;
+                    numberFormat.numberStyle =
+                        NSNumberFormatterStyle.DecimalStyle;
                     break;
                 case "percent":
-                    numberFormat.numberStyle = NSNumberFormatterStyle.PercentStyle;
+                    numberFormat.numberStyle =
+                        NSNumberFormatterStyle.PercentStyle;
                     break;
                 case "currency":
-                    numberFormat.numberStyle = NSNumberFormatterStyle.CurrencyStyle;
+                    numberFormat.numberStyle =
+                        NSNumberFormatterStyle.CurrencyStyle;
                     if (options.currency !== void 0) {
                         numberFormat.currencyCode = options.currency;
                     }
                     break;
                 default:
-                    numberFormat.numberStyle = NSNumberFormatterStyle.DecimalStyle;
+                    numberFormat.numberStyle =
+                        NSNumberFormatterStyle.DecimalStyle;
                     break;
             }
         } else {
@@ -89,7 +108,11 @@ export class NumberFormat extends commonNumberFormat {
         if (pattern) {
             numberFormat.positiveFormat = pattern;
         } else {
-            if (options && (options.style.toLowerCase() === "currency" && options.currencyDisplay === "code")) {
+            if (
+                options &&
+                (options.style.toLowerCase() === "currency" &&
+                    options.currencyDisplay === "code")
+            ) {
                 let tempPattern = numberFormat.positiveFormat;
                 // this will display currency code instead of currency symbol
                 tempPattern = tempPattern.replace("¤", "¤¤");

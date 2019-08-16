@@ -1,7 +1,7 @@
 import {
     DateTimeFormat as commonDateTimeFormat,
     NumberFormat as commonNumberFormat,
-    FULL
+    FULL,
 } from "./nativescript-intl-common";
 import { NumberFormatOptions } from "./nativescript-intl";
 
@@ -19,8 +19,13 @@ function getNativeLocale(locale?: string) {
         let country = "";
         if (firstHypenIndex > -1) {
             lang = locale.substr(0, firstHypenIndex);
-            let nextHypenIndex = locale.substr(firstHypenIndex + 1).indexOf("-");
-            country = locale.substr(firstHypenIndex + 1, (nextHypenIndex > -1) ? nextHypenIndex : undefined);
+            let nextHypenIndex = locale
+                .substr(firstHypenIndex + 1)
+                .indexOf("-");
+            country = locale.substr(
+                firstHypenIndex + 1,
+                nextHypenIndex > -1 ? nextHypenIndex : undefined,
+            );
         } else {
             lang = locale;
         }
@@ -37,7 +42,10 @@ function getNativeLocale(locale?: string) {
 }
 
 export class DateTimeFormat extends commonDateTimeFormat {
-    public getNativePattern(patternDefinition: {date?: string, time?: string}, locale?: string): string {
+    public getNativePattern(
+        patternDefinition: { date?: string; time?: string },
+        locale?: string,
+    ): string {
         let result = "";
         let flag = 0;
         let nativeLocale;
@@ -61,16 +69,24 @@ export class DateTimeFormat extends commonDateTimeFormat {
                 break;
             case 1:
                 // only locale
-                dateFormat = java.text.DateFormat.getDateTimeInstance(0, 0, nativeLocale);
+                dateFormat = java.text.DateFormat.getDateTimeInstance(
+                    0,
+                    0,
+                    nativeLocale,
+                );
                 break;
             case 2:
                 // only date 0 for full, 3 for Short date format using default locale
-                dateFormat = java.text.DateFormat.getDateInstance(patternDefinition.date === FULL ? 0 : 3);
+                dateFormat = java.text.DateFormat.getDateInstance(
+                    patternDefinition.date === FULL ? 0 : 3,
+                );
                 break;
             case 3:
                 // date + locale
-                dateFormat =
-                java.text.DateFormat.getDateInstance(patternDefinition.date === FULL ? 0 : 3, nativeLocale);
+                dateFormat = java.text.DateFormat.getDateInstance(
+                    patternDefinition.date === FULL ? 0 : 3,
+                    nativeLocale,
+                );
                 break;
             case 4:
                 // only time we always use long pattern using default locale
@@ -78,16 +94,25 @@ export class DateTimeFormat extends commonDateTimeFormat {
                 break;
             case 5:
                 // time + locale
-                dateFormat = java.text.DateFormat.getTimeInstance(1, nativeLocale);
+                dateFormat = java.text.DateFormat.getTimeInstance(
+                    1,
+                    nativeLocale,
+                );
                 break;
             case 6:
                 // time + date using default locale
-                dateFormat = java.text.DateFormat.getDateTimeInstance(patternDefinition.date === FULL ? 0 : 3, 1);
+                dateFormat = java.text.DateFormat.getDateTimeInstance(
+                    patternDefinition.date === FULL ? 0 : 3,
+                    1,
+                );
                 break;
             case 7:
                 // locale + date + time
-                dateFormat =
-                java.text.DateFormat.getDateTimeInstance(patternDefinition.date === FULL ? 0 : 3, 1, nativeLocale);
+                dateFormat = java.text.DateFormat.getDateTimeInstance(
+                    patternDefinition.date === FULL ? 0 : 3,
+                    1,
+                    nativeLocale,
+                );
                 break;
             default:
                 break;
@@ -97,13 +122,18 @@ export class DateTimeFormat extends commonDateTimeFormat {
     }
 
     public formatNative(pattern: string, locale?: string, date?: Date): string {
-        let sdf = locale ?
-            new java.text.SimpleDateFormat(pattern, getNativeLocale(locale)) :
-            new java.text.SimpleDateFormat(pattern);
-        return sdf.format(date ? new java.util.Date(date.valueOf()) : new java.util.Date()).toString();
+        let sdf = locale
+            ? new java.text.SimpleDateFormat(pattern, getNativeLocale(locale))
+            : new java.text.SimpleDateFormat(pattern);
+        return sdf
+            .format(
+                date
+                    ? new java.util.Date(date.valueOf())
+                    : new java.util.Date(),
+            )
+            .toString();
     }
 }
-
 
 // style?: string;
 // currency?: string;
@@ -113,7 +143,12 @@ export class DateTimeFormat extends commonDateTimeFormat {
 // minimumFractionDigits?: number;
 // maximumFractionDigits?: number;
 export class NumberFormat extends commonNumberFormat {
-    public formatNative(value: number, locale?: string, options?: NumberFormatOptions, pattern?: string) {
+    public formatNative(
+        value: number,
+        locale?: string,
+        options?: NumberFormatOptions,
+        pattern?: string,
+    ) {
         let numberFormat;
         if (pattern) {
             numberFormat = new java.text.DecimalFormat(pattern);
@@ -121,23 +156,37 @@ export class NumberFormat extends commonNumberFormat {
             if (options) {
                 switch (options.style.toLowerCase()) {
                     case "decimal":
-                        numberFormat = java.text.NumberFormat.getNumberInstance(getNativeLocale(locale));
+                        numberFormat = java.text.NumberFormat.getNumberInstance(
+                            getNativeLocale(locale),
+                        );
                         break;
                     case "percent":
-                        numberFormat = java.text.NumberFormat.getPercentInstance(getNativeLocale(locale));
+                        numberFormat = java.text.NumberFormat.getPercentInstance(
+                            getNativeLocale(locale),
+                        );
                         break;
                     case "currency":
-                        numberFormat = java.text.NumberFormat.getCurrencyInstance(getNativeLocale(locale));
+                        numberFormat = java.text.NumberFormat.getCurrencyInstance(
+                            getNativeLocale(locale),
+                        );
                         if (options.currency !== void 0) {
-                            numberFormat.setCurrency(java.util.Currency.getInstance(options.currency));
+                            numberFormat.setCurrency(
+                                java.util.Currency.getInstance(
+                                    options.currency,
+                                ),
+                            );
                         }
                         break;
                     default:
-                        numberFormat = java.text.NumberFormat.getNumberInstance(getNativeLocale(locale));
+                        numberFormat = java.text.NumberFormat.getNumberInstance(
+                            getNativeLocale(locale),
+                        );
                         break;
                 }
             } else {
-                numberFormat = java.text.NumberFormat.getNumberInstance(getNativeLocale(locale));
+                numberFormat = java.text.NumberFormat.getNumberInstance(
+                    getNativeLocale(locale),
+                );
             }
         }
 
@@ -146,23 +195,31 @@ export class NumberFormat extends commonNumberFormat {
         }
 
         if (options && options.minimumFractionDigits !== void 0) {
-            numberFormat.setMinimumFractionDigits(options.minimumFractionDigits);
+            numberFormat.setMinimumFractionDigits(
+                options.minimumFractionDigits,
+            );
         }
 
         if (options && options.maximumFractionDigits !== void 0) {
-            numberFormat.setMaximumFractionDigits(options.maximumFractionDigits);
+            numberFormat.setMaximumFractionDigits(
+                options.maximumFractionDigits,
+            );
         }
 
         if (options && options.useGrouping !== void 0) {
             numberFormat.setGroupingUsed(options.useGrouping);
         }
 
-        let decimalFormatSymbols = locale ?
-            new java.text.DecimalFormatSymbols(getNativeLocale(locale)) :
-            new java.text.DecimalFormatSymbols();
+        let decimalFormatSymbols = locale
+            ? new java.text.DecimalFormatSymbols(getNativeLocale(locale))
+            : new java.text.DecimalFormatSymbols();
         numberFormat.setDecimalFormatSymbols(decimalFormatSymbols);
 
-        if (options && (options.style.toLowerCase() === "currency" && options.currencyDisplay === "code")) {
+        if (
+            options &&
+            (options.style.toLowerCase() === "currency" &&
+                options.currencyDisplay === "code")
+        ) {
             if (!pattern) {
                 let currrentPattern = numberFormat.toPattern();
                 // this will display currency code instead of currency symbol
@@ -172,7 +229,9 @@ export class NumberFormat extends commonNumberFormat {
             }
 
             if (options.currency !== void 0) {
-                decimalFormatSymbols.setCurrency(java.util.Currency.getInstance(options.currency));
+                decimalFormatSymbols.setCurrency(
+                    java.util.Currency.getInstance(options.currency),
+                );
             }
         }
 
