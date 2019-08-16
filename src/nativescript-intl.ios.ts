@@ -51,7 +51,7 @@ export class DateTimeFormat extends commonDateTimeFormat {
 // minimumFractionDigits?: number;
 // maximumFractionDigits?: number;
 export class NumberFormat extends commonNumberFormat {
-    public formatNative(
+    private getNumberFormatter(
         value: number,
         locale?: string,
         options?: NumberFormatOptions,
@@ -121,6 +121,21 @@ export class NumberFormat extends commonNumberFormat {
         }
 
         // return numberFormat.stringFromNumber(NSNumber.alloc().initWithDouble(value));
-        return numberFormat.stringFromNumber(value);
+        return numberFormat;
+    }
+
+    public formatNative(
+        value: number,
+        locale?: string,
+        options?: NumberFormatOptions,
+        pattern?: string,
+    ) {
+        const numberFormatter = this.getNumberFormatter(
+            value,
+            locale,
+            options,
+            pattern,
+        );
+        return numberFormatter.stringFromNumber(value);
     }
 }
