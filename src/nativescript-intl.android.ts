@@ -252,4 +252,19 @@ export class NumberFormat extends commonNumberFormat {
         );
         return numberFormatter.format(value);
     }
+
+    public parseNative(
+        value: string,
+        locale?: string,
+        options?: Intl.NumberFormatOptions,
+        pattern?: string,
+    ): number {
+        const numberFormatter = this.getNumberFormatter(
+            0,
+            locale,
+            options,
+            pattern,
+        );
+        return numberFormatter.parse(value);
+    }
 }

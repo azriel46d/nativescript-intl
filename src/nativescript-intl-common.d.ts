@@ -7,14 +7,21 @@ export declare class DateTimeFormat {
     private locale;
     private options;
     private pattern;
-    constructor(locale?: string, options?: Intl.DateTimeFormatOptions, pattern?: string);
+    constructor(
+        locale?: string,
+        options?: Intl.DateTimeFormatOptions,
+        pattern?: string,
+    );
     private hasTimeOptions(options);
     private hasDateOptions(options);
     private useFullDatePattern(intlOptions);
-    getNativePattern(patternDefinition: {
-        date?: string;
-        time?: string;
-    }, locale?: string): string;
+    getNativePattern(
+        patternDefinition: {
+            date?: string;
+            time?: string;
+        },
+        locale?: string,
+    ): string;
     private getCorrectPatternForLocale();
     private dateTimeFormatElements;
     private getDateElementsFromPattern(pattern);
@@ -29,7 +36,24 @@ export declare class NumberFormat {
     private locale;
     private options;
     private pattern;
-    constructor(locale?: string, options?: Intl.NumberFormatOptions, pattern?: string);
-    formatNative(value: number, locale?: string, options?: Intl.NumberFormatOptions, pattern?: string): string;
+    constructor(
+        locale?: string,
+        options?: Intl.NumberFormatOptions,
+        pattern?: string,
+    );
+    formatNative(
+        value: number,
+        locale?: string,
+        options?: Intl.NumberFormatOptions,
+        pattern?: string,
+    ): string;
     format(value: number): string;
+
+    parseNative(
+        value: string,
+        locale?: string,
+        options?: Intl.NumberFormatOptions,
+        pattern?: string,
+    ): number;
+    parse(value: string): number;
 }

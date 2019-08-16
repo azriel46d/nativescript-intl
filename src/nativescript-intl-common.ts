@@ -2,7 +2,7 @@ import {
     DateTimeFormat as intlDateTimeFormat,
     DateTimeFormatOptions as intlDateTimeFormatOptions,
     NumberFormat as intlNumberFormat,
-    NumberFormatOptions as intlNumberFormatOptions
+    NumberFormatOptions as intlNumberFormatOptions,
 } from "./nativescript-intl";
 
 export const NUMERIC = "numeric";
@@ -13,7 +13,11 @@ export const FULL = "full";
 export let resolvedPatterns = new Map();
 
 export class DateTimeFormat implements intlDateTimeFormat {
-    constructor(private locale?: string, private options?: intlDateTimeFormatOptions, private pattern?: string) {
+    constructor(
+        private locale?: string,
+        private options?: intlDateTimeFormatOptions,
+        private pattern?: string,
+    ) {
         if (options && options.minute === NUMERIC) {
             this.options.minute = TWODIGIT;
         }
@@ -23,14 +27,20 @@ export class DateTimeFormat implements intlDateTimeFormat {
     }
 
     private hasTimeOptions(options: intlDateTimeFormatOptions): boolean {
-        return options.hour !== undefined || options.minute !== undefined || options.second !== undefined;
+        return (
+            options.hour !== undefined ||
+            options.minute !== undefined ||
+            options.second !== undefined
+        );
     }
 
     private hasDateOptions(options: intlDateTimeFormatOptions): boolean {
-        return options.weekday !== undefined ||
+        return (
+            options.weekday !== undefined ||
             options.year !== undefined ||
             options.month !== undefined ||
-            options.day !== undefined;
+            options.day !== undefined
+        );
     }
 
     private useFullDatePattern(intlOptions): boolean {
@@ -39,7 +49,10 @@ export class DateTimeFormat implements intlDateTimeFormat {
         let propsArrayLength = propsArray.length;
         let result = false;
         for (i = 0; i < propsArrayLength; i++) {
-            if (intlOptions[propsArray[i]] === LONG || intlOptions[propsArray[i]] === SHORT) {
+            if (
+                intlOptions[propsArray[i]] === LONG ||
+                intlOptions[propsArray[i]] === SHORT
+            ) {
                 result = true;
                 break;
             }
@@ -47,12 +60,15 @@ export class DateTimeFormat implements intlDateTimeFormat {
         return result;
     }
 
-    public getNativePattern(patternDefinition: {date?: string, time?: string}, locale?: string): string {
+    public getNativePattern(
+        patternDefinition: { date?: string; time?: string },
+        locale?: string,
+    ): string {
         return "";
     }
 
     private getCorrectPatternForLocale(): string {
-        let dateTimePatternOptions: {date?: string, time?: string} = {};
+        let dateTimePatternOptions: { date?: string; time?: string } = {};
         if (this.hasDateOptions(this.options)) {
             if (this.useFullDatePattern(this.options)) {
                 dateTimePatternOptions.date = FULL;
@@ -66,7 +82,9 @@ export class DateTimeFormat implements intlDateTimeFormat {
         let result = this.getNativePattern(dateTimePatternOptions, this.locale);
         if (this.options.hour) {
             if (this.options.hour12 !== undefined) {
-                result = this.options.hour12 ? result.replace(/H/g, "h") : result.replace(/h/g, "H");
+                result = this.options.hour12
+                    ? result.replace(/H/g, "h")
+                    : result.replace(/h/g, "H");
             } else {
                 this.options.hour12 = !(result.indexOf("H") > -1);
             }
@@ -75,18 +93,18 @@ export class DateTimeFormat implements intlDateTimeFormat {
     }
 
     private dateTimeFormatElements = {
-        "M": "month",
-        "E": "weekday",
-        "c": "weekday",
-        "d": "day",
-        "y": "year",
-        "h": "hour",
-        "H": "hour",
-        "m": "minute",
-        "s": "second",
-        "z": "timeZoneName",
-        "G": "era",
-        "a": "hour12"
+        M: "month",
+        E: "weekday",
+        c: "weekday",
+        d: "day",
+        y: "year",
+        h: "hour",
+        H: "hour",
+        m: "minute",
+        s: "second",
+        z: "timeZoneName",
+        G: "era",
+        a: "hour12",
     };
 
     // isDateElement (boolean), patternValue - dateElement content, intlOption - corresponding Intl option name
@@ -104,8 +122,8 @@ export class DateTimeFormat implements intlDateTimeFormat {
                 }
                 for (let j = i; j < p + 1; j++) {
                     result.push({
-                        "isDateElement": false,
-                        "patternValue": pattern[j]
+                        isDateElement: false,
+                        patternValue: pattern[j],
                     });
                 }
                 i = p + 1;
@@ -113,16 +131,18 @@ export class DateTimeFormat implements intlDateTimeFormat {
             }
             if (this.dateTimeFormatElements.hasOwnProperty(pattern[i])) {
                 let j = i;
-                while (i < patternLength && pattern[i] === pattern[j]) { i++; }
+                while (i < patternLength && pattern[i] === pattern[j]) {
+                    i++;
+                }
                 result.push({
-                    "isDateElement": true,
-                    "patternValue": pattern.substr(j, i - j),
-                    "intlOption": this.dateTimeFormatElements[pattern[j]]
+                    isDateElement: true,
+                    patternValue: pattern.substr(j, i - j),
+                    intlOption: this.dateTimeFormatElements[pattern[j]],
                 });
             } else {
                 result.push({
-                    "isDateElement": false,
-                    "patternValue": pattern[i]
+                    isDateElement: false,
+                    patternValue: pattern[i],
                 });
                 i++;
             }
@@ -159,15 +179,24 @@ export class DateTimeFormat implements intlDateTimeFormat {
                 let formatChar = patternOptions[i].patternValue[0];
                 let intlOptionValue = options[patternOptions[i].intlOption];
                 if (intlOptionValue !== undefined) {
-                    let newPatternValue = this.prepareDateElement(intlOptionValue, formatChar);
+                    let newPatternValue = this.prepareDateElement(
+                        intlOptionValue,
+                        formatChar,
+                    );
                     patternOptions[i].patternValue = newPatternValue;
                 } else {
                     // remove the date element from pattern and also its delimiter (before the date element)
                     if (i > 0) {
                         let j = i - 1;
-                        while (patternOptions[j] && patternOptions[j].isDateElement === false) {
+                        while (
+                            patternOptions[j] &&
+                            patternOptions[j].isDateElement === false
+                        ) {
                             if (patternOptions[j].patternValue !== " ") {
-                                if (patternOptions[j].patternValue !== '"' && patternOptions[j].patternValue !== "'") {
+                                if (
+                                    patternOptions[j].patternValue !== '"' &&
+                                    patternOptions[j].patternValue !== "'"
+                                ) {
                                     patternOptions[j].patternValue = "";
                                 }
                                 break;
@@ -184,7 +213,12 @@ export class DateTimeFormat implements intlDateTimeFormat {
         let result = [];
         let i = 0;
         // remove leading delimiters
-        while (patternOptions[i].patternValue === "" || patternOptions[i].isDateElement === false) { i++; }
+        while (
+            patternOptions[i].patternValue === "" ||
+            patternOptions[i].isDateElement === false
+        ) {
+            i++;
+        }
         for (i; i < patternOptionsLength; i++) {
             result.push(patternOptions[i].patternValue);
         }
@@ -201,11 +235,25 @@ export class DateTimeFormat implements intlDateTimeFormat {
             if (this.pattern) {
                 this._preparedPattern = this.pattern;
             } else {
-                if (resolvedPatterns.has({locale: this.locale, options: this.options})) {
-                    this._preparedPattern = resolvedPatterns.get({locale: this.locale, options: this.options});
+                if (
+                    resolvedPatterns.has({
+                        locale: this.locale,
+                        options: this.options,
+                    })
+                ) {
+                    this._preparedPattern = resolvedPatterns.get({
+                        locale: this.locale,
+                        options: this.options,
+                    });
                 } else {
-                    this._preparedPattern = this.preparePattern(this.getCorrectPatternForLocale(), this.options);
-                    resolvedPatterns.set({locale: this.locale, options: this.options}, this._preparedPattern);
+                    this._preparedPattern = this.preparePattern(
+                        this.getCorrectPatternForLocale(),
+                        this.options,
+                    );
+                    resolvedPatterns.set(
+                        { locale: this.locale, options: this.options },
+                        this._preparedPattern,
+                    );
                 }
             }
         }
@@ -218,14 +266,40 @@ export class DateTimeFormat implements intlDateTimeFormat {
 }
 
 export class NumberFormat implements intlNumberFormat {
-    constructor(private locale?: string, private options?: intlNumberFormatOptions, private pattern?: string) { }
+    constructor(
+        private locale?: string,
+        private options?: intlNumberFormatOptions,
+        private pattern?: string,
+    ) {}
 
-    public formatNative(value: number, locale?: string, options?: intlNumberFormatOptions, pattern?: string): string {
+    public formatNative(
+        value: number,
+        locale?: string,
+        options?: intlNumberFormatOptions,
+        pattern?: string,
+    ): string {
         return "";
     }
 
     public format(value: number) {
-        return this.formatNative(value, this.locale, this.options, this.pattern);
+        return this.formatNative(
+            value,
+            this.locale,
+            this.options,
+            this.pattern,
+        );
+    }
+
+    public parseNative(
+        value: string,
+        locale?: string,
+        options?: Intl.NumberFormatOptions,
+        pattern?: string,
+    ): number {
+        return NaN;
+    }
+
+    public parse(value: string): number {
+        return this.parseNative(value, this.locale, this.options, this.pattern);
     }
 }
-
