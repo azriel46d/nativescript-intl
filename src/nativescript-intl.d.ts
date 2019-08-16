@@ -17,7 +17,11 @@ export interface DateTimeFormatOptions {
 }
 
 export class DateTimeFormat {
-    constructor(locale?: string, options?: DateTimeFormatOptions, pattern?: string);
+    constructor(
+        locale?: string,
+        options?: DateTimeFormatOptions,
+        pattern?: string,
+    );
     format(date?: Date): string;
 }
 
@@ -32,6 +36,11 @@ export interface NumberFormatOptions {
 }
 
 export class NumberFormat {
-    constructor(locale?: string, options?: NumberFormatOptions, pattern?: string);
+    constructor(
+        locale?: string,
+        options?: NumberFormatOptions,
+        pattern?: string,
+    );
     format(value: number): string;
+    parse(value: string): number;
 }
