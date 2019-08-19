@@ -265,6 +265,7 @@ export class NumberFormat extends commonNumberFormat {
             options,
             pattern,
         );
-        return numberFormatter.parse(value);
+        const numberAmount = numberFormatter.parse(value);
+        return Number(numberAmount);
     }
 }
