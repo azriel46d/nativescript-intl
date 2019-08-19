@@ -138,4 +138,20 @@ export class NumberFormat extends commonNumberFormat {
         );
         return numberFormatter.stringFromNumber(value);
     }
+
+    public parseNative(
+        value: string,
+        locale?: string,
+        options?: Intl.NumberFormatOptions,
+        pattern?: string,
+    ): number {
+        const numberFormatter = this.getNumberFormatter(
+            0,
+            locale,
+            options,
+            pattern,
+        );
+        const numberAmount = numberFormatter.numberFromString(value);
+        return Number(numberAmount);
+    }
 }
