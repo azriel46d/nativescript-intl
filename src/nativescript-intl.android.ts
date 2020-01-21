@@ -213,7 +213,7 @@ export class NumberFormat extends commonNumberFormat {
         let decimalFormatSymbols = locale
             ? new java.text.DecimalFormatSymbols(getNativeLocale(locale))
             : new java.text.DecimalFormatSymbols();
-        numberFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+
 
         if (
             options &&
@@ -228,13 +228,14 @@ export class NumberFormat extends commonNumberFormat {
                 numberFormat.setDecimalFormatSymbols(decimalFormatSymbols);
             }
 
-            if (options.currency !== void 0) {
-                decimalFormatSymbols.setCurrency(
-                    java.util.Currency.getInstance(options.currency),
-                );
-            }
         }
-
+         // Moved instantiation, onAndroid if code is selected it is remaining as "XXX" whilst if symbol is selected it stays as "¤" 
+         if (options.currency !== void 0) {
+            decimalFormatSymbols.setCurrency(
+                java.util.Currency.getInstance(options.currency),
+            );
+        }        
+        numberFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         return numberFormat;
     }
 
